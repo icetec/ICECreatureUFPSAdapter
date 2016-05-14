@@ -90,7 +90,13 @@ namespace ICE.Creatures.Adapter
 		public bool UseMultiplePlayerDamageHandler = false;
 		public bool UsePlayerDamage = false;
 		private GameObject m_Player = null;
+		public GameObject Player{
+			get{ return m_Player = ( m_Player == null ? GameObject.FindGameObjectWithTag("Player") : m_Player ); }
+		}
 		private vp_DamageHandler m_PlayerDamageHandler = null;
+		public vp_DamageHandler PlayerDamageHandler{
+			get{ return m_PlayerDamageHandler = ( m_PlayerDamageHandler == null ? (Player != null ? Player.transform.GetComponent<vp_DamageHandler>():null ) : m_PlayerDamageHandler ); }
+		}
 		public string PlayerDamageBehaviourModeKey = "";
 		public float PlayerDamage = 1;
 		public float PlayerDamageRange = 2;
@@ -110,18 +116,10 @@ namespace ICE.Creatures.Adapter
 			m_Controller = GetComponent<ICECreatureControl>();
 
 			m_Player = GameObject.FindGameObjectWithTag("Player");
-			m_PlayerDamageHandler = m_Player.transform.GetComponent<vp_DamageHandler>();
 
-			///m_Audio = GetComponent<AudioSource>();
-			
-			//CurrentHealth = MaxHealth;
-			
-			// check for obsolete respawn-related parameters, create a vp_Respawner
-			// component (if necessary) and disable such values on this component
-			// NOTE: this check is temporary and will be removed in the future
-			//CheckForObsoleteParams();
-			
-			//Instances.Add(GetComponent<Collider>(), this);
+			if( m_Player != null )
+				m_PlayerDamageHandler = Player.transform.GetComponent<vp_DamageHandler>();
+
 		}
 
 		public override void Die()
@@ -216,7 +214,7 @@ namespace ICE.Creatures.Adapter
 				return;
 			
 			// damage is always done in singleplayer, but only in multiplayer if you are the master
-			if (!vp_Gameplay.isMaster)
+			if (!vp_Gameplay.IsMaster)
 				return;
 			
 			if (CurrentHealth <= 0.0f)
@@ -240,7 +238,7 @@ namespace ICE.Creatures.Adapter
 			CurrentHealth = Mathf.Min(CurrentHealth - damageInfo.Damage, MaxHealth);
 			
 			// in multiplayer, report damage for score tracking purposes
-			if (vp_Gameplay.isMultiplayer && (damageInfo.Source != null))
+			if (vp_Gameplay.IsMultiplayer && (damageInfo.Source != null))
 				vp_GlobalEvent<Transform, Transform, float>.Send("TransmitDamage", Transform.root, damageInfo.OriginalSource, damageInfo.Damage);
 			
 			// detect and transmit death as event
@@ -276,7 +274,7 @@ namespace ICE.Creatures.Adapter
 		private ICECreatureUFPSPlayerDamageObject GetPlayerDamage()
 		{
 			string _behaviour = m_Controller.Creature.Behaviour.BehaviourModeKey;
-			float _distance = Vector3.Distance( m_Player.transform.position, transform.position );
+			float _distance = Vector3.Distance( Player.transform.position, transform.position );
 			List<ICECreatureUFPSPlayerDamageObject> _damages = new List<ICECreatureUFPSPlayerDamageObject>();
 			foreach( ICECreatureUFPSPlayerDamageObject _damage in PlayerDamages )
 			{
@@ -306,10 +304,10 @@ namespace ICE.Creatures.Adapter
 					m_PlayerDamageTimer += Time.deltaTime;
 					if( m_PlayerDamageTimer >= _damage.DamageInterval )
 					{
-						if( ( m_PlayerDamageHandler != null ) && ( Source != null ) )
-							m_PlayerDamageHandler.Damage( new vp_DamageInfo( _damage.Damage, Source, _damage.DamageType ));
+						if( ( PlayerDamageHandler != null ) && ( Source != null ) )
+							PlayerDamageHandler.Damage( new vp_DamageInfo( _damage.Damage, Source, _damage.DamageType ));
 						else if( ! RequireDamageHandler )
-							m_Player.SendMessage( _damage.DamageMethodName, _damage.Damage, SendMessageOptions.DontRequireReceiver);
+							Player.SendMessage( _damage.DamageMethodName, _damage.Damage, SendMessageOptions.DontRequireReceiver);
 						
 						m_PlayerDamageTimer = 0;
 					}
@@ -321,16 +319,16 @@ namespace ICE.Creatures.Adapter
 			{
 				if( PlayerDamageBehaviourModeKey != "" && PlayerDamageBehaviourModeKey == m_Controller.Creature.Behaviour.BehaviourModeKey )
 				{
-					float _distance = Vector3.Distance( m_Player.transform.position, transform.position );
+					float _distance = Vector3.Distance( Player.transform.position, transform.position );
 					if( _distance <= PlayerDamageRange )
 					{
 						m_PlayerDamageTimer += Time.deltaTime;
 						if( m_PlayerDamageTimer >= PlayerDamageInterval )
 						{
-							if( ( m_PlayerDamageHandler != null ) && ( Source != null ) )
-								m_PlayerDamageHandler.Damage( new vp_DamageInfo( PlayerDamage, Source, PlayerDamageType ));
+							if( ( PlayerDamageHandler != null ) && ( Source != null ) )
+								PlayerDamageHandler.Damage( new vp_DamageInfo( PlayerDamage, Source, PlayerDamageType ));
 							else if( ! RequireDamageHandler )
-								m_Player.SendMessage( PlayerDamageMethodName, PlayerDamage, SendMessageOptions.DontRequireReceiver);
+								Player.SendMessage( PlayerDamageMethodName, PlayerDamage, SendMessageOptions.DontRequireReceiver);
 
 							m_PlayerDamageTimer = 0;
 						}
