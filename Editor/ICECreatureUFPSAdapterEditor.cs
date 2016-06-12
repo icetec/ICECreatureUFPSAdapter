@@ -18,26 +18,35 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using UnityEditor;
 using UnityEditor.AnimatedValues;
+
 using ICE;
-using ICE.Styles;
-using ICE.Layouts;
+using ICE.World;
+using ICE.World.EditorUtilities;
+using ICE.World.EditorInfos;
+
 using ICE.Creatures;
-using ICE.Creatures.EditorHandler;
+using ICE.Creatures.EditorUtilities;
 
 namespace ICE.Creatures.Adapter
 {
-	
+
 	[CustomEditor(typeof(ICECreatureUFPSAdapter))]
-	public class ICECreatureUFPSAdapterEditor : Editor
+	public class ICECreatureUFPSAdapterEditor : ICEWorldBehaviourEditor
 	{
 		private string _damage_behaviour;
 		private vp_DamageInfo.DamageType _damage_type;
+
 		public override void OnInspectorGUI()
 		{
-			ICECreatureUFPSAdapter _adapter = (ICECreatureUFPSAdapter)target;
-			ICECreatureControl _control = _adapter.GetComponent<ICECreatureControl>();	
+			ICECreatureUFPSAdapter _target = DrawMonoHeader<ICECreatureUFPSAdapter>();
+			DrawCreatureUFPSAdapter( _target );
+			DrawMonoFooter( _target );
 
-			EditorGUILayout.Separator();	
+		}
+
+		public void DrawCreatureUFPSAdapter( ICECreatureUFPSAdapter _adapter )
+		{
+			ICECreatureControl _control = _adapter.GetComponent<ICECreatureControl>();	
 
 			_adapter.UseCreatureDamage = ICEEditorLayout.ToggleLeft( "Creature Damage", "", _adapter.UseCreatureDamage, true );
 			if( _adapter.UseCreatureDamage )
@@ -59,7 +68,7 @@ namespace ICE.Creatures.Adapter
 							ICEEditorLayout.EndHorizontal();
 							
 							EditorGUI.indentLevel++;
-							_damage.BehaviourModeKey = EditorBehaviour.BehaviourSelect( _control, "Behaviour", "", _damage.BehaviourModeKey , "IMPACT" );
+							_damage.BehaviourModeKey = BehaviourEditor.BehaviourSelect( _control, "Behaviour", "", _damage.BehaviourModeKey , "IMPACT" );
 							
 							_damage.UseAdvanced = ICEEditorLayout.Toggle( "Advanced Influences", "", _damage.UseAdvanced, "" );
 							if( _damage.UseAdvanced )
@@ -85,7 +94,7 @@ namespace ICE.Creatures.Adapter
 					}
 					else
 					{
-						_adapter.BehaviourModeKey = EditorBehaviour.BehaviourSelect( _control, "Behaviour", "", _adapter.BehaviourModeKey , "IMPACT" );
+						_adapter.BehaviourModeKey = BehaviourEditor.BehaviourSelect( _control, "Behaviour", "", _adapter.BehaviourModeKey , "IMPACT" );
 						_adapter.UseAdvanced = ICEEditorLayout.Toggle( "Advanced Influences", "", _adapter.UseAdvanced, "" );
 						if( _adapter.UseAdvanced )
 						{
@@ -128,7 +137,7 @@ namespace ICE.Creatures.Adapter
 							_damage.Damage = ICEEditorLayout.Slider( "Damage", "", _damage.Damage, 0.05f, 0, 100 );
 							_damage.DamageType =  (vp_DamageInfo.DamageType)ICEEditorLayout.EnumPopup( "Damage Type", "", _damage.DamageType );
 							EditorGUILayout.Separator();
-							_damage.DamageBehaviourModeKey = EditorBehaviour.BehaviourSelect( _control, "Trigger Behaviour", "", _damage.DamageBehaviourModeKey , "ATTACK" );
+							_damage.DamageBehaviourModeKey = BehaviourEditor.BehaviourSelect( _control, "Trigger Behaviour", "", _damage.DamageBehaviourModeKey , "ATTACK" );
 							_damage.DamageRange = ICEEditorLayout.Slider( "Trigger Range", "", _damage.DamageRange, 0.05f, 0, 10 );
 							_damage.DamageInterval = ICEEditorLayout.Slider( "Trigger Interval", "", _damage.DamageInterval, 0.05f, 0, 10 );
 							EditorGUILayout.Separator();
@@ -138,7 +147,7 @@ namespace ICE.Creatures.Adapter
 
 					ICEEditorStyle.SplitterByIndent(EditorGUI.indentLevel + 1);
 					ICEEditorLayout.BeginHorizontal();
-					_damage_behaviour = EditorBehaviour.BehaviourPopup( _control, "Add Damage Handler by Behaviour", "", _damage_behaviour );
+					_damage_behaviour = BehaviourEditor.BehaviourPopup( _control, "Add Damage Handler by Behaviour", "", _damage_behaviour );
 
 					EditorGUI.BeginDisabledGroup( _damage_behaviour.Trim() == "" );
 						if( GUILayout.Button( new GUIContent( "ADD", "Adds a new damage handler" ), ICEEditorStyle.CMDButtonDouble ) )
@@ -151,7 +160,7 @@ namespace ICE.Creatures.Adapter
 					_adapter.PlayerDamage = ICEEditorLayout.Slider( "Damage", "", _adapter.PlayerDamage, 0.05f, 0, 100 );
 					_adapter.PlayerDamageType =  (vp_DamageInfo.DamageType)ICEEditorLayout.EnumPopup( "Damage Type", "", _adapter.PlayerDamageType );
 					EditorGUILayout.Separator();
-					_adapter.PlayerDamageBehaviourModeKey = EditorBehaviour.BehaviourSelect( _control, "Trigger Behaviour", "", _adapter.PlayerDamageBehaviourModeKey , "ATTACK" );
+					_adapter.PlayerDamageBehaviourModeKey = BehaviourEditor.BehaviourSelect( _control, "Trigger Behaviour", "", _adapter.PlayerDamageBehaviourModeKey , "ATTACK" );
 					_adapter.PlayerDamageRange = ICEEditorLayout.Slider( "Trigger Range", "", _adapter.PlayerDamageRange, 0.05f, 0, 10 );
 					_adapter.PlayerDamageInterval = ICEEditorLayout.Slider( "Trigger Interval", "", _adapter.PlayerDamageInterval, 0.05f, 0, 10 );
 					EditorGUILayout.Separator();

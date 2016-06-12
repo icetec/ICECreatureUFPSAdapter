@@ -108,9 +108,6 @@ namespace ICE.Creatures.Adapter
 		public bool RequireDamageHandler = true;
 		public string PlayerDamageMethodName = "Damage";
 
-
-
-
 		protected new void Awake ()
 		{
 			m_Controller = GetComponent<ICECreatureControl>();
