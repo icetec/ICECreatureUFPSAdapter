@@ -162,7 +162,7 @@ namespace ICE.Creatures.Adapter
 
 			//	Debug.Log( _hits.Length );
 
-				if( CreatureDamages.Count > 0 )
+				if( UseMultipleCreatureDamageHandler && CreatureDamages.Count > 0 )
 				{
 					ICECreatureUFPSCreatureDamageObject _damage = GetCreatureDamage( damageInfo.Type );
 					if( _damage != null )
