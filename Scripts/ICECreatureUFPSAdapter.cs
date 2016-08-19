@@ -270,7 +270,7 @@ namespace ICE.Creatures.Adapter
 
 		private ICECreatureUFPSPlayerDamageObject GetPlayerDamage()
 		{
-			string _behaviour = m_Controller.Creature.Behaviour.BehaviourModeKey;
+			string _behaviour = m_Controller.Creature.Behaviour.ActiveBehaviourModeKey;
 			float _distance = Vector3.Distance( Player.transform.position, transform.position );
 			List<ICECreatureUFPSPlayerDamageObject> _damages = new List<ICECreatureUFPSPlayerDamageObject>();
 			foreach( ICECreatureUFPSPlayerDamageObject _damage in PlayerDamages )
@@ -314,7 +314,7 @@ namespace ICE.Creatures.Adapter
 			}
 			else
 			{
-				if( PlayerDamageBehaviourModeKey != "" && PlayerDamageBehaviourModeKey == m_Controller.Creature.Behaviour.BehaviourModeKey )
+				if( PlayerDamageBehaviourModeKey != "" && PlayerDamageBehaviourModeKey == m_Controller.Creature.Behaviour.ActiveBehaviourModeKey )
 				{
 					float _distance = Vector3.Distance( Player.transform.position, transform.position );
 					if( _distance <= PlayerDamageRange )
