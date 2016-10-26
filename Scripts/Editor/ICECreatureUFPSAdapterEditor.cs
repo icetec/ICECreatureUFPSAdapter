@@ -147,7 +147,7 @@ namespace ICE.Creatures.Adapter
 
 					ICEEditorStyle.SplitterByIndent(EditorGUI.indentLevel + 1);
 					ICEEditorLayout.BeginHorizontal();
-					_damage_behaviour = BehaviourEditor.BehaviourPopup( _control, "Add Damage Handler by Behaviour", "", _damage_behaviour );
+					_damage_behaviour = BehaviourEditor.BehaviourSelect( _control, "Add Damage Handler by Behaviour", "", _damage_behaviour );
 
 					EditorGUI.BeginDisabledGroup( _damage_behaviour.Trim() == "" );
 						if( GUILayout.Button( new GUIContent( "ADD", "Adds a new damage handler" ), ICEEditorStyle.CMDButtonDouble ) )
