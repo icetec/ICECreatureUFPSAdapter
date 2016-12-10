@@ -1,2 +1,2 @@
-# ICECreatureUFPSAdapter
-The ICECreatureUFPSAdapter handles the interaction between ICECreatureControl and your UFPS Player.
+# ICEWorldUFPSAdapter
+The ICEWorldUFPSAdapter handles the interaction between the ICE World and your UFPS Player.
